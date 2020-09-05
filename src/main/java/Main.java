@@ -1,3 +1,8 @@
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -10,13 +15,23 @@ public class Main {
         menu(menuSelection());
     }
     private static String menuSelection(){
-        System.out.println("\nWelcome to this Java 14 demo. Please select from the menu: " +
-                "\n1: ObjectNullPointer" +
-                "\n2: StringNullPointer" +
-                "\n3: Switch (old ver) expressions" +
-                "\n4: Switch (NEW ver) expressions"+
-                "\n5: Switch New Food switch");
-        System.out.print("\nSelect:");
+        System.out.print("""
+                -----------------------------
+                Welcome to this Java 14 demo.
+                -----------------------------
+                Please select from the menu:\s
+                
+                1: ObjectNullPointer
+                2: StringNullPointer
+                3: Switch (old ver) expressions
+                4: Switch (NEW ver) expressions
+                5: Switch New Food switch
+                6: Pattern matching v.1
+                7: Text blocks    
+                8: Records demo
+                9: Records demo 'breaking'
+                
+                Select: """);
         scanner = new Scanner(System.in);
         return userInput = scanner.nextLine();
     }
@@ -26,34 +41,91 @@ public class Main {
             case "1" -> objectNullpointer();
             case "2" -> stringNullpointer();
             case "3" -> {
-                String welcome = "---------[3].JAVA SWITCH OLD-------";
-                System.out.print(welcome + "\nSelect a month: Ex. jan, feb:  ");
+                System.out.print("""
+                        
+                        ---------[3].SWITCH OLD-------
+                        Choose a month: Ex. jan, feb:  
+                        
+                        Select:""");
                 userInput = scanner.nextLine();
                 oldSwitch(userInput.toLowerCase());
             }
             case "4" -> {
-                String welcome = "---------[4].JAVA NEW-SWITCH-------";
-                System.out.print(welcome + "\nSelect a month: Ex. jan = 1, feb = 2:  ");
+                System.out.print(""" 
+                        
+                        ---------[4].NEW-SWITCH-------
+                        Choose a month: Ex. jan = 1, feb = 2:
+                        
+                        Select:""");
                 userInput = scanner.nextLine();
                 newSwitch(userInput);
             }
             case "5" -> {
-                String welcome = "---------[5].JAVA NEW-FOOD-SWITCH-------";
-                System.out.print(welcome + "\nSelect a meal. Ex. burger, donut, cheese, pizza: ");
+                System.out.print("""      
+                        ---------[5].NEW-FOOD-SWITCH-------
+                        Choose a meal. Ex. burger, donut, cheese, pizza: 
+                        
+                        Select: """);
                 userInput = scanner.nextLine();
                 newFoodSwitcher(userInput.toLowerCase());
+            }
+            case "6" -> {
+                //TODO fix why return values is never 0?
+                System.out.print("""
+                        
+                        ---------[6].PATTERN MATCHING-------
+                        Write in two doubles. Ex. 1.5 2.5 
+                        
+                        Type:""");
+                userInput = scanner.nextLine();
+                double s = oldPatternMatch(new BigDecimal("0.5"));
+                double f = newPatternMatch(new BigDecimal("1.6"));
+                if(s > 0 && f > 0) {
+                    System.out.println("Pattern match is true");
+                }else{
+                    System.out.println("Pattern match is false");
+                }
+            }
+            case "7" -> {
+                System.out.print("""
+                        
+                        ---------[7].TEXT BLOCKS-------
+                        """);
+                try {
+                    textBlock();
+                } catch (ScriptException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "8" -> {
+                System.out.print("""
+                        
+                        ---------[8].USING RECORDS------
+                        """);
+                javaRecords();
+            }
+            case "9" -> {
+                System.err.print("""
+                        
+                        ---------[9].USING RECORDS 'breaking'------
+                        """);
+                try {
+                    javaRecordsBreak();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
             default -> System.err.println("You selected a unknown choice: " + choice);
         }
     }
 
     private static void objectNullpointer(){
-        System.out.println("---------[1].OBJECT NULL POINTER -------");
+        System.out.println("\n---------[1].OBJECT NULL POINTER -------");
         Object myObject = null;
         myObject.toString().hashCode();
     }
     private static void stringNullpointer(){
-        System.out.println("---------[2].STRING NULL POINTER -------");
+        System.out.println("\n---------[2].STRING NULL POINTER -------");
         String nullValue = null;
         nullValue.toString().length();
     }
@@ -127,4 +199,58 @@ public class Main {
         System.out.println("\nYou selected: " + food + "which belongs in " +locale);
     }
 
+    private static int oldPatternMatch(Object o){
+        // can be replaced with pattern.
+        if(o instanceof BigDecimal){
+            BigDecimal b = (BigDecimal) o;
+            return b.precision();
+        }
+        else
+            return 0;
+    }
+
+    private static int newPatternMatch(Object o){
+        if(o instanceof BigDecimal b){
+            return b.precision();
+        }
+        else
+            return 0;
+    }
+
+    private static void textBlock() throws ScriptException {
+        ScriptEngineManager mgr = new ScriptEngineManager();
+        ScriptEngine engine = mgr.getEngineByName("JavaScript");
+        String s = (String) engine.eval("""
+                function getString() {  \
+                 return ('"A JS String!"');  \
+                } \
+                  \
+                getString()""");
+        System.out.println(s);
+    }
+
+    private static void javaRecords() {
+        Course course = new Course("What's new in Java 14", Duration.ofHours(1), 5);
+        Course course2 = new Course("What's new in Java 14", Duration.ofHours(1), 5);
+        System.out.println("Is the object  similar? -> " + (course == course2));
+        System.out.println("Is the content similar? -> " + (course.equals(course2)));
+        System.out.println("---------------------------------");
+    }
+
+    private static void javaRecordsBreak() throws InterruptedException {
+        // GIVES A RUNTIME EXCEPTION BREAK BECAUSE VALUE IS +5
+
+        try {
+            Thread.sleep(100);
+            new Course("What's new in Java 15", Duration.ofHours(2), 6);
+        }catch (IllegalArgumentException | InterruptedException e){
+            Scanner scanner = new Scanner(System.in);
+            System.err.print("Input value is above 5!");
+            Thread.sleep(100);
+            System.out.print("""
+             Please rate again! (ex 1 - 5)
+            Rate:  """);
+            System.out.println("\n"+new Course("What's new in Java 15", Duration.ofHours(2),scanner.nextInt()));
+        }
+    }
 }
