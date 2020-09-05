@@ -239,7 +239,8 @@ public class Main {
 
     private static void javaRecordsBreak() throws InterruptedException {
         // GIVES A RUNTIME EXCEPTION BREAK BECAUSE VALUE IS +5
-
+        // NB! Records has Final values
+        // Sleep methods used to render String correctly
         try {
             Thread.sleep(100);
             new Course("What's new in Java 15", Duration.ofHours(2), 6);
@@ -248,8 +249,8 @@ public class Main {
             System.err.print("Input value is above 5!");
             Thread.sleep(100);
             System.out.print("""
-             Please rate again! (ex 1 - 5)
-            Rate:  """);
+                     Please rate again! (Ex. 1-5)
+                    Rate: """);
             System.out.println("\n"+new Course("What's new in Java 15", Duration.ofHours(2),scanner.nextInt()));
         }
     }
